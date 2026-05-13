@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Home</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+<button
+    type="button"
+    id="link-settings-toggle"
+    class="link-settings-toggle"
+    aria-label="Edit quick links"
+    aria-expanded="false"
+    aria-controls="link-settings">
+    <svg class="link-settings-toggle__icon" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
+        <path
+            fill="currentColor"
+            d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/>
+    </svg>
+</button>
+
+<div class="container">
+    <div>
+        <h2 id="quote">Loading quote...</h2>
+        <p id="author"></p>
+    </div>
+
+
+        <div>
+
+
+    <!-- <h1 id="welcome"></h1> -->
+
+    <form
+        class="search-box"
+        action="https://www.google.com/search"
+        method="GET">
+
+        <span class="search-icon" aria-hidden="true">
+            <svg class="search-icon__svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="7"/>
+                <path d="M16 16l4.5 4.5"/>
+            </svg>
+        </span>
+
+        <input
+            type="search"
+            name="q"
+            id="search-q"
+            placeholder="search here"
+            autocomplete="on"
+            enterkeyhint="search"
+            aria-autocomplete="list"
+            aria-controls="search-suggest"
+            aria-expanded="false"
+        />
+
+        <div
+            id="search-suggest"
+            class="search-suggest"
+            role="listbox"
+            aria-label="Search suggestions"
+            hidden></div>
+
+        <!-- <button type="submit">
+            Search
+        </button> -->
+    </form>
+
+    <div class="links" id="links"></div>
+
+    <div class="clock" id="clock"></div>
+
+
+
+    </div>
+</div>
+
+<div id="link-settings" class="link-settings" aria-hidden="true">
+    <div class="link-settings__backdrop" tabindex="-1"></div>
+    <div
+        class="link-settings__dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="link-settings-title">
+        <header class="link-settings__header">
+            <h2 id="link-settings-title" class="link-settings__title">Quick links</h2>
+            <p class="link-settings__subtitle">One shortcut per card. Leave both fields blank on a row to skip it.</p>
+        </header>
+        <div id="link-settings-rows" class="link-settings__rows"></div>
+        <footer class="link-settings__footer">
+            <button type="button" id="link-settings-add" class="link-settings__add">
+                + Add link
+            </button>
+            <div class="link-settings__footer-actions">
+                <button type="button" id="link-settings-cancel" class="link-settings__btn link-settings__btn--text">
+                    Cancel
+                </button>
+                <button type="button" id="link-settings-save" class="link-settings__btn link-settings__btn--primary">
+                    Save
+                </button>
+            </div>
+        </footer>
+        <p class="link-settings__hint">Desktop: Ctrl or ⌘ + S to open or save · Esc to close</p>
+    </div>
+</div>
+
+<script src="scripts.js"></script>
+
+</body>
+</html>

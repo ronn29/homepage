@@ -163,7 +163,22 @@ a {
     -webkit-backdrop-filter:blur(10px);
     border:1px solid rgba(255,255,255,0.1);
 }
+.search-box input:focus{
+    background:
+    linear-gradient(
+        to bottom right,
+        rgba(255,255,255,0.18),
+        rgba(255,255,255,0.08)
+    );
 
+    border:1px solid rgba(255,255,255,0.16);
+
+    box-shadow:
+    0 12px 30px rgba(0,0,0,0.35),
+    0 0 20px rgba(120,120,255,0.15);
+
+color:white;
+}
 .search-box input{
     padding-left: clamp(46px, 12vw, 52px);
 }

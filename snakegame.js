@@ -104,19 +104,89 @@ function stopSnakeLoop() {
     gameIntervalId = null;
 }
 
-function syncSnakePanelWithConnectivity() {
-    if (!snakePanel || !ctx) return;
-    const offline = !navigator.onLine;
-    snakePanel.hidden = !offline;
-    if (offline) {
-        resetSnake();
-        draw();
-        startSnakeLoop();
-    } else {
-        stopSnakeLoop();
+/**
+ * navigator.onLine is often wrong after Wi‑Fi drops. Combined image + fetch
+ * probes tolerate different browser / privacy-toolbar behavior better than fetch alone.
+ */
+function pingConnectivityImage(timeoutMs = 2800) {
+    return new Promise((resolve) => {
+        let settled = false;
+        const img = new Image();
+        const done = (ok) => {
+            if (settled) return;
+            settled = true;
+            clearTimeout(t);
+            img.onload = img.onerror = null;
+            img.removeAttribute("src");
+            resolve(ok);
+        };
+        const t = setTimeout(() => done(false), timeoutMs);
+        img.onload = () => done(true);
+        img.onerror = () => done(false);
+        img.src =
+            `https://www.google.com/favicon.ico?connectivity_ck=${Date.now()}`;
+    });
+}
+
+function pingConnectivityFetch(timeoutMs = 2800) {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), timeoutMs);
+    return fetch(
+        `https://www.gstatic.com/generate_204?ck=${Date.now()}`,
+        { cache: "no-store", mode: "no-cors", signal: controller.signal }
+    )
+        .then(() => true)
+        .catch(() => false)
+        .finally(() => clearTimeout(id));
+}
+
+let connectivityRefreshRunning = false;
+
+async function refreshSnakeConnectivity() {
+    if (!snakePanel || !ctx || connectivityRefreshRunning) return;
+    connectivityRefreshRunning = true;
+
+    try {
+        let effectiveOffline = navigator.onLine === false;
+
+        if (!effectiveOffline) {
+            const [viaImg, viaFetch] = await Promise.all([
+                pingConnectivityImage(),
+                pingConnectivityFetch(),
+            ]);
+            effectiveOffline = !viaImg && !viaFetch;
+        }
+
+        const shouldShowSnake = effectiveOffline;
+        const wasShowing = !snakePanel.hidden;
+
+        snakePanel.hidden = !shouldShowSnake;
+
+        if (shouldShowSnake) {
+            if (!wasShowing) resetSnake();
+            draw();
+            startSnakeLoop();
+        } else {
+            stopSnakeLoop();
+        }
+    } finally {
+        connectivityRefreshRunning = false;
     }
 }
 
-window.addEventListener("offline", syncSnakePanelWithConnectivity);
-window.addEventListener("online", syncSnakePanelWithConnectivity);
-syncSnakePanelWithConnectivity();
+function scheduleConnectivityCheck() {
+    void refreshSnakeConnectivity();
+}
+
+function scheduleConnectivityCheckWhileVisible() {
+    if (document.visibilityState !== "visible") return;
+    void refreshSnakeConnectivity();
+}
+
+window.addEventListener("offline", scheduleConnectivityCheck);
+window.addEventListener("online", scheduleConnectivityCheck);
+window.addEventListener("visibilitychange", scheduleConnectivityCheck);
+window.addEventListener("focus", scheduleConnectivityCheck);
+
+scheduleConnectivityCheck();
+setInterval(scheduleConnectivityCheckWhileVisible, 4500);

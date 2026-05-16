@@ -1,6 +1,32 @@
 // clock
+const TIME_MOOD_STORAGE_KEY = "homepageV2_timeMoodEnabled";
+
+function isTimeMoodEnabled() {
+    return localStorage.getItem(TIME_MOOD_STORAGE_KEY) !== "false";
+}
+
+function saveTimeMoodEnabled(enabled) {
+    localStorage.setItem(TIME_MOOD_STORAGE_KEY, enabled ? "true" : "false");
+}
+
+function getTimeMood(hour) {
+    if (hour >= 5 && hour < 11) return "morning";
+    if (hour >= 11 && hour < 17) return "afternoon";
+    if (hour >= 17 && hour < 21) return "evening";
+    return "night";
+}
+
+function updateTimeMood(now = new Date()) {
+    if (!isTimeMoodEnabled()) {
+        delete document.body.dataset.timeMood;
+        return;
+    }
+    document.body.dataset.timeMood = getTimeMood(now.getHours());
+}
+
 function updateClock() {
     const now = new Date();
+    updateTimeMood(now);
     document.getElementById("clock").innerText =
         now.toLocaleTimeString([], {
             hour: '2-digit',
@@ -171,6 +197,7 @@ const linkSettingsAdd = document.getElementById("link-settings-add");
 const linkSettingsSave = document.getElementById("link-settings-save");
 const linkSettingsCancel = document.getElementById("link-settings-cancel");
 const linkSettingsToggle = document.getElementById("link-settings-toggle");
+const timeMoodToggle = document.getElementById("time-mood-toggle");
 
 function isLinkSettingsOpen() {
     return linkSettingsRoot?.classList.contains("is-open") ?? false;
@@ -323,6 +350,14 @@ linkSettingsBackdrop?.addEventListener(
 );
 
 linkSettingsToggle?.addEventListener("click", openLinkSettings);
+
+if (timeMoodToggle) {
+    timeMoodToggle.checked = isTimeMoodEnabled();
+    timeMoodToggle.addEventListener("change", () => {
+        saveTimeMoodEnabled(timeMoodToggle.checked);
+        updateTimeMood();
+    });
+}
 
 renderQuickLinks();
 

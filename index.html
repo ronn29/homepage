@@ -66,7 +66,10 @@
 
         <div class="links" id="links"></div>
 
-        <div class="clock" id="clock"></div>
+        <div class="clock" aria-label="Current local time">
+            <!-- <span class="clock__label">Local time</span> -->
+            <span class="clock__time" id="clock" aria-live="polite"></span>
+        </div>
 
     </section>
 </main>
@@ -82,6 +85,14 @@
             <h2 id="link-settings-title" class="link-settings__title">Quick links</h2>
             <p class="link-settings__subtitle">One shortcut per card. Leave both fields blank on a row to skip it.</p>
         </header>
+        <label class="settings-toggle">
+            <span>
+                <span class="settings-toggle__title">Time-of-day mood</span>
+                <span class="settings-toggle__description">Subtly shift the background and accent colors.</span>
+            </span>
+            <input type="checkbox" id="time-mood-toggle" class="settings-toggle__input">
+            <span class="settings-toggle__switch" aria-hidden="true"></span>
+        </label>
         <div id="link-settings-rows" class="link-settings__rows"></div>
         <footer class="link-settings__footer">
             <button type="button" id="link-settings-add" class="link-settings__add">

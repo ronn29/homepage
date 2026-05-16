@@ -1,25 +1,3 @@
-// random greetings
-const greetings = [
-    "Welcome",
-    "Hello",
-    "Hi",
-    "Good to see you",
-    "Howdy",
-    "Greetings",
-    "Hey there",
-    "Nice to see you",
-    "Welcome back",
-    "Have a great day"
-];
-
-const randomGreeting =
-    greetings[Math.floor(Math.random() * greetings.length)];
-
-// document.getElementById("welcome").innerText =
-//     `${randomGreeting}, RONN!`;
-
-
-
 // clock
 function updateClock() {
     const now = new Date();
@@ -132,16 +110,56 @@ function saveLinks(links) {
     localStorage.setItem(LINKS_STORAGE_KEY, JSON.stringify(links));
 }
 
+function getLinkHost(href) {
+    try {
+        return new URL(href).hostname.replace(/^www\./i, "");
+    } catch {
+        return "";
+    }
+}
+
+function getLinkInitial(label, href) {
+    const source = label.trim() || getLinkHost(href);
+    return (source.charAt(0) || "?").toUpperCase();
+}
+
 function renderQuickLinks() {
     const container = document.getElementById("links");
     if (!container) return;
     container.replaceChildren();
     for (const { label, href } of loadLinks()) {
         const a = document.createElement("a");
+        const host = getLinkHost(href);
+        const icon = document.createElement("span");
+        const favicon = document.createElement("img");
+        const initial = document.createElement("span");
+        const text = document.createElement("span");
+
         a.href = href;
-        a.textContent = label;
+        a.setAttribute("aria-label", `${label}${host ? ` (${host})` : ""}`);
         a.target = "_blank";
         a.rel = "noopener noreferrer";
+
+        icon.className = "link-icon";
+        icon.setAttribute("aria-hidden", "true");
+
+        favicon.alt = "";
+        favicon.loading = "lazy";
+        favicon.src =
+            "https://www.google.com/s2/favicons?sz=64&domain_url=" +
+            encodeURIComponent(href);
+        favicon.addEventListener("error", () => {
+            icon.classList.add("is-fallback");
+        });
+
+        initial.className = "link-icon__initial";
+        initial.textContent = getLinkInitial(label, href);
+
+        text.className = "link-label";
+        text.textContent = label;
+
+        icon.append(favicon, initial);
+        a.append(icon, text);
         container.appendChild(a);
     }
 }
